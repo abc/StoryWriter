@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Welcome to our collaborative storytelling game</h2>
+
+@*
+    <p>Hey, I'm really sorry, but something went wrong there.</p>
+*@
+
+<p>It's really nice to meet you, thanks for coming. What can I call you?</p>
+
+<form action="~/Story/Index" method="post">
+    @Html.AntiForgeryToken()
+    <label for="writerName">My Name: </label>
+    <input id="writerName" type="text" name="Id" placeholder="Your name" />
+    <button type="submit">That's me!</button>
+</form>

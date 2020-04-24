@@ -1,0 +1,58 @@
+﻿@model StoryWriter.Models.Room
+
+@{
+    ViewBag.Title = "Room";
+}
+
+<h2>Welcome to @Model.Name <small>Invite Code: @Model.Code</small></h2>
+
+<h3>Co-Authors:</h3>
+<div class="user-list">
+    @foreach (var user in Model.Writers)
+    {
+        <div class="user-list-item">
+            @user.Name
+        </div>
+    }
+</div>
+
+<h3>The story so far:</h3>
+
+<div class="story-body">
+    <span class="story-element story-element-intro" data-author="@Model.Story.Intro.Author">@Model.Story.Intro.Text</span>
+    @foreach (var element in Model.Story.StoryFragments)
+    {
+        <span class="story-element" data-author="@element.Author.Name">@element.Text</span>
+    }
+</div>
+
+<form action="~/Story/AddLine/@Model.Code" method="post">
+    @Html.AntiForgeryToken()
+    <label for="nextLine">Next line of the story:</label>
+    <input size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
+    <button type="submit">Submit for voting</button>
+</form>
+
+<div>
+    <a href="~/Story/LeaveRoom">Leave this room</a>
+</div>
+
+@section Scripts {
+    <script>
+        function update() {
+            $.ajax({
+                url: "@Url.Content("~/Story/Update/" + Model.Code)",
+            })
+
+                .done(function( data ) {
+                if ( console && console.log ) {
+                    console.log( "Sample of data:", data );
+                }
+            });
+        }
+
+        setInterval(function () {
+            update();
+        }, 1000);
+    </script>
+}
