@@ -7,14 +7,14 @@
 <h2>Welcome to @Model.Name <small>Invite Code: @Model.Code</small></h2>
 
 <h3>Co-Authors:</h3>
-<div class="user-list">
+<ul id="user-list">
     @foreach (var user in Model.Writers)
     {
-        <div class="user-list-item">
+        <li id="user-list-item">
             @user.Name
-        </div>
+        </li>
     }
-</div>
+</ul>
 
 <h3>The story so far:</h3>
 
@@ -30,8 +30,13 @@
     @Html.AntiForgeryToken()
     <label for="nextLine">Next line of the story:</label>
     <input size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
-    <button type="submit">Submit for voting</button>
 </form>
+
+<div id="vote-container">
+    <form id="vote-area">
+
+    </form>
+</div>
 
 <div>
     <a href="~/Story/LeaveRoom">Leave this room</a>
@@ -39,14 +44,45 @@
 
 @section Scripts {
     <script>
+        let displayedVote = false;
+
         function update() {
+            let fragmentText = $("#nextLine").val();
+
+            var vote = $('#vote-area').find('input[name="vote"]').val();
+            var update = { SenderId: "@Session[SessionVariables.UserId]", Fragment: fragmentText, FragmentId: vote };
+            
+
             $.ajax({
                 url: "@Url.Content("~/Story/Update/" + Model.Code)",
+                data: update,
             })
 
-                .done(function( data ) {
+                .done(function (data) {
+                    $("#user-list").html("");
+                    data.WritersPresent.forEach((element) => {
+                         $("#user-list").append("<li>" + element.Name + "</li>");
+                    });
+
+                    if (data.VotesChanged) {
+                        displayedVote = false;
+                    }
+
+                    if (data.TimeToVote) {
+                        let fragments = data.FragmentsThisRound;
+
+                        if (!displayedVote) {
+                            $("#vote-area").empty();
+
+                            fragments.forEach((element) => {
+                                $("#vote-area").append("<div><input type=\"radio\" id=\"radio-"+element.Identifier+"\" name=\"vote\" value=\""+element.Identifier+"\">" + element.Text + "</input></div>")
+                            });
+
+                            displayedVote = true;
+                        }
+                    }
                 if ( console && console.log ) {
-                    console.log( "Sample of data:", data );
+                    console.log( data );
                 }
             });
         }

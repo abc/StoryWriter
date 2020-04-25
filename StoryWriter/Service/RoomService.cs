@@ -33,5 +33,50 @@ namespace StoryWriter.Service
         {
             return new Room { Code = GenerateCode(), Name = roomName, Owner = owner };
         }
+
+        public static DateTime NextFrame (Room room)
+        {
+            return room.StartTime.AddMinutes((room.FrameNumber * 1) + 1);
+        }
+
+        public static void RegisterFragment (Room room, Writer writer, string fragment)
+        {
+            // Find if the writer has an existing fragment.
+            var existingFragmentForAuthor = room.FrameFragments.Where(w => w.Author.Identifier == writer.Identifier);
+
+            // Update the writer's existing fragment, if it exists.
+            if (existingFragmentForAuthor.Any())
+            {
+                existingFragmentForAuthor.Single().Text = fragment;
+            }
+
+            // If one doesn't exist, then add a new fragment.
+            else
+            {
+                room.FrameFragments.Add(new StoryFragment { Author = writer, Text = fragment, Identifier = Guid.NewGuid() });
+            }
+        }
+
+        public static void RegisterVote(Room room, Writer writer, string fragmentId)
+        {
+            room.FragmentVotes[writer.Identifier] = new Guid(fragmentId);
+        }
+
+        public static ServerUpdate GetUpdate (Room room)
+        {
+            var nextFrame = NextFrame(room);
+
+            var secondsToVote = (DateTime.Now - nextFrame).Seconds;
+            var timeToVote = nextFrame <= room.StartTime;
+            var fragmentsThisRound = new List<StoryFragment>();
+
+            if (timeToVote)
+            {
+                secondsToVote = 0;
+                fragmentsThisRound.AddRange(room.FrameFragments);
+            }
+
+            return new ServerUpdate { WritersPresent = room.Writers, TimeToVote = timeToVote, SecondsToVote = secondsToVote };
+        }
     }
 }

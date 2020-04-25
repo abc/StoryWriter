@@ -128,9 +128,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClientUpdate.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\Story.cs" />
     <Compile Include="Models\StoryFragment.cs" />
+    <Compile Include="Models\ServerUpdate.cs" />
     <Compile Include="Models\ValidationResponse.cs" />
     <Compile Include="Models\Writer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

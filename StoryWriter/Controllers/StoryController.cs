@@ -39,7 +39,7 @@ namespace StoryWriter.Controllers
             return RedirectToAction("Index");
         }
 
-        public string Update(string Id)
+        public string Update(string Id, Guid SenderId, string Fragment, string FragmentId)
         {
             // ID = Room code.
             var roomCode = Id.ToUpperInvariant();
@@ -60,8 +60,20 @@ namespace StoryWriter.Controllers
                 return null;
             }
 
+            if (!string.IsNullOrWhiteSpace(Fragment))
+            {
+                RoomService.RegisterFragment(room, writer, Fragment);
+            }
+
+            if (!string.IsNullOrWhiteSpace(FragmentId))
+            {
+                RoomService.RegisterVote(room, writer, FragmentId);
+            }
+
+            var serverUpdate = RoomService.GetUpdate(room);
+
             Response.ContentType = "application/json";
-            return JsonConvert.SerializeObject(room);
+            return JsonConvert.SerializeObject(serverUpdate);
         }
 
         public ActionResult LeaveRoom()

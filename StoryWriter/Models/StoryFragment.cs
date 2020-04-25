@@ -22,12 +22,15 @@ namespace StoryWriter.Models
         /// </summary>
         public bool Ending;
 
+        public Guid Identifier { get; set; }
+
         /// <summary>
         /// Constructor method for a story fragment.
         /// </summary>
         public StoryFragment()
         {
             Author = new Writer();
+            Identifier = Guid.NewGuid();
         }
     }
 }

@@ -32,6 +32,8 @@ namespace StoryWriter.Models
         /// </summary>
         public Story Story { get; set; }
 
+        public Dictionary<Guid, Guid> FragmentVotes { get; set; }
+
         /// <summary>
         /// Constructor method for the room.
         /// </summary>
@@ -39,6 +41,14 @@ namespace StoryWriter.Models
         {
             Writers = new List<Writer>();
             Story = new Story();
+            FrameNumber = 0;
+            StartTime = DateTime.Now;
+            FrameFragments = new List<StoryFragment>();
+            FragmentVotes = new Dictionary<Guid, Guid>();
         }
+
+        public int FrameNumber { get; set; }
+        public DateTime StartTime { get; set; }
+        public List<StoryFragment> FrameFragments { get; set; }
     }
 }
