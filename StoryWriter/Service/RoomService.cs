@@ -34,11 +34,6 @@ namespace StoryWriter.Service
             return new Room { Code = GenerateCode(), Name = roomName, Owner = owner };
         }
 
-        public static DateTime NextFrame (Room room)
-        {
-            return room.StartTime.AddMinutes((room.FrameNumber * 1) + 1);
-        }
-
         public static void RegisterFragment (Room room, Writer writer, string fragment)
         {
             // Find if the writer has an existing fragment.
@@ -64,19 +59,31 @@ namespace StoryWriter.Service
 
         public static ServerUpdate GetUpdate (Room room)
         {
-            var nextFrame = NextFrame(room);
-
-            var secondsToVote = (DateTime.Now - nextFrame).Seconds;
-            var timeToVote = nextFrame <= room.StartTime;
+            var secondsToAction = (room.NextActionTime - DateTime.Now).Seconds;
+            var timeToAction = secondsToAction <= 0;
             var fragmentsThisRound = new List<StoryFragment>();
+            fragmentsThisRound.AddRange(room.FrameFragments);
 
-            if (timeToVote)
+            return new ServerUpdate { WritersPresent = room.Writers, TimeToVote = timeToAction, SecondsToVote = secondsToAction, FragmentsThisRound = room.FrameFragments };
+        }
+
+        public static Dictionary<Guid, int> VotesToTotals (Dictionary<Guid, Guid> votes)
+        {
+            var result = new Dictionary<Guid, int>();
+
+            foreach (var vote in votes)
             {
-                secondsToVote = 0;
-                fragmentsThisRound.AddRange(room.FrameFragments);
+                if (result.ContainsKey(vote.Value))
+                {
+                    result[vote.Value]++;
+                }
+                else
+                {
+                    result[vote.Value] = 1;
+                }
             }
 
-            return new ServerUpdate { WritersPresent = room.Writers, TimeToVote = timeToVote, SecondsToVote = secondsToVote };
+            return result;
         }
     }
 }

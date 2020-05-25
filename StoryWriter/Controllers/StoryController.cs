@@ -60,6 +60,8 @@ namespace StoryWriter.Controllers
                 return null;
             }
 
+            ApplicationService.GameUpdate(room);
+
             if (!string.IsNullOrWhiteSpace(Fragment))
             {
                 RoomService.RegisterFragment(room, writer, Fragment);

@@ -14,6 +14,44 @@ namespace StoryWriter.Service
             Writers = new List<Writer>();
         }
 
+        public static void GameUpdate(Room room)
+        {
+            // Only update every ten seconds.
+            if (!(room.LastUpdate.AddSeconds(10) <= DateTime.Now))
+            {
+                return;
+            }
+
+            room.LastUpdate = DateTime.Now;
+
+            var timeToNextAction = room.NextActionTime - DateTime.Now;
+            var seconds = timeToNextAction.Seconds;
+
+            var timeToTakeAction = room.NextActionTime <= DateTime.Now;
+
+            if (timeToTakeAction && room.NextAction == ActionType.Vote)
+            {
+                room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
+                room.NextAction = ActionType.TallyVotes;
+                return;
+            }
+
+            if (timeToTakeAction && room.NextAction == ActionType.TallyVotes)
+            {
+                room.NextAction = ActionType.Vote;
+                room.NextActionTime = DateTime.Now.AddMinutes(1);
+
+                var totals = RoomService.VotesToTotals(room.FragmentVotes);
+                var winner = totals.OrderByDescending(w => w.Value).First();
+
+                room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winner.Key).Single());
+                room.FrameFragments.Clear();
+                room.FragmentVotes.Clear();
+                return;
+            }
+            
+        }
+
         public static void AddWriter(Writer writer)
         {
             Writers.Add(writer);

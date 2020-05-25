@@ -41,13 +41,18 @@ namespace StoryWriter.Models
         {
             Writers = new List<Writer>();
             Story = new Story();
-            FrameNumber = 0;
             StartTime = DateTime.Now;
             FrameFragments = new List<StoryFragment>();
             FragmentVotes = new Dictionary<Guid, Guid>();
+            LastUpdate = DateTime.Now;
+            NextActionTime = DateTime.Now.AddSeconds(60);
+            NextAction = ActionType.Vote;
+            StartTime = DateTime.Now;
         }
 
-        public int FrameNumber { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public DateTime NextActionTime { get; set; }
+        public ActionType NextAction { get; set; }
         public DateTime StartTime { get; set; }
         public List<StoryFragment> FrameFragments { get; set; }
     }
