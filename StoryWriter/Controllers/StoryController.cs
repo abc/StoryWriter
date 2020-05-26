@@ -298,30 +298,5 @@ namespace StoryWriter.Controllers
 
             return View(room);
         }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult AddLine(string Id, string nextLine)
-        {
-            var roomCode = Id;
-
-            var room = ApplicationService.FindRoom(roomCode);
-
-            if (room == null)
-            {
-                SessionService.AddMessage(Session, "A room with that code could not be found, please check the code and try again.");
-                return View();
-            }
-
-            var writer = SessionService.GetWriter(Session[SessionVariables.UserId]);
-
-            if (writer == null)
-            {
-                throw new InvalidOperationException("Unable to create a room, you are unidentified.");
-            }
-
-            room.Story.StoryFragments.Add(new StoryFragment { Author = writer, Text = nextLine, Ending = false });
-
-            return RedirectToAction("Room", new { Id = roomCode });
-        }
     }
 }

@@ -37,11 +37,8 @@
 </div>
 <div class="row">
     <div class="col-xl-9 col-lg-6 mb-4">
-        <form action="~/Story/AddLine/@Model.Code" method="post">
-            @Html.AntiForgeryToken()
-            <label for="nextLine">Next line of the story:</label>
-            <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
-        </form>
+    <label for="nextLine">Next line of the story:</label>
+    <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
     </div>
     <div class="col-xl-3 col-lg-6 mb-4">
         <h2 class="h6 font-weight-bold text-center mb-4">Time Left</h2>
