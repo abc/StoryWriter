@@ -22,24 +22,67 @@
    @Html.Partial("StoryText", Model.Story)
 </div>
 
-<form action="~/Story/AddLine/@Model.Code" method="post">
-    @Html.AntiForgeryToken()
-    <label for="nextLine">Next line of the story:</label>
-    <input size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
-</form>
+
 
 <div id="vote-container">
     <form id="vote-area">
 
     </form>
 </div>
-
+<div class="row">
+    <div class="col-xl-9 col-lg-6 mb-4">
+        <form action="~/Story/AddLine/@Model.Code" method="post">
+            @Html.AntiForgeryToken()
+            <label for="nextLine">Next line of the story:</label>
+            <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
+        </form>
+    </div>
+    <div class="col-xl-3 col-lg-6 mb-4">
+        <h2 class="h6 font-weight-bold text-center mb-4">Time Left</h2>
+        <div class="progress mx-auto" id="countdown-timer">
+            <span class="progress-left">
+                <span class="progress-bar border-primary"></span>
+            </span>
+            <span class="progress-right">
+                <span class="progress-bar border-primary"></span>
+            </span>
+            <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                <div class="h2 font-weight-bold"><span id="seconds-to-vote"></span><sub class="small">s</sub></div>
+            </div>
+        </div>
+    </div>
+</div>
 <div>
     <a href="~/Story/LeaveRoom">Leave this room</a>
 </div>
 
 @section Scripts {
     <script>
+        var progressMax = 60;
+
+        function percentageToDegrees(percentage, max)
+        {
+            return percentage / max * 360
+        }
+
+        function updateTimer() {
+            $(".progress").each(function () {
+                var value = $(this).attr('data-value');
+                var left = $(this).find('.progress-left .progress-bar');
+                var right = $(this).find('.progress-right .progress-bar');
+
+                if (value > 0) {
+                    if (value <= progressMax / 2) {
+                        right.css('transform', 'rotate(' + percentageToDegrees(value, progressMax) + 'deg)')
+                    }
+                    else {
+                        right.css('transform', 'rotate(180deg)')
+                        left.css('transform', 'rotate(' + percentageToDegrees(value - progressMax / 2, progressMax) + 'deg)')
+                    }
+                }
+            });
+        }
+
         let displayedVote = false;
 
         function update() {
@@ -86,6 +129,11 @@
                                 $("#story-body").html(story);
                             });
                     }
+
+                    $('#countdown-timer').attr('data-value', data.SecondsToVote);
+                    $('#seconds-to-vote').html(data.SecondsToVote);
+
+                    updateTimer();
 
                 if ( console && console.log ) {
                     console.log( data );
