@@ -133,7 +133,9 @@
                         })
                             .done(function (story) {
                                 $("#story-body").html(story);
+                                $("#vote-area").empty();
                             });
+
                     }
 
                     $('#countdown-timer').attr('data-value', data.SecondsToVote);
