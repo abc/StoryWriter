@@ -98,9 +98,32 @@ namespace StoryWriter.Controllers
             return JsonConvert.SerializeObject(serverUpdate);
         }
 
-        public ActionResult LeaveRoom()
+        public ActionResult LeaveRoom(string Id)
         {
+            // ID = Room code.
+            var roomCode = Id.ToUpperInvariant();
+
+            var writer = SessionService.GetWriter(Session[SessionVariables.UserId]);
+
+            if (writer == null)
+            {
+                throw new InvalidOperationException("Unable to join a room, you are unidentified.");
+            }
+
+            // Try to find the room.
+            var room = ApplicationService.FindRoom(roomCode);
+
+            if (room == null)
+            {
+                SessionService.AddMessage(Session, "A room with that code could not be found, please check the code and try again.");
+                return null;
+            }
+
             Session[SessionVariables.RoomCode] = null;
+
+            room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
+            room.AbsentWriters.Add(writer);
+
             return RedirectToAction("Index");
         }
 
@@ -171,9 +194,14 @@ namespace StoryWriter.Controllers
                 return View(writer);
             }
 
-            if (!room.Writers.Exists(w => w.Identifier == writer.Identifier))
+            if (!room.PresentWriters.Exists(w => w.Identifier == writer.Identifier))
             {
-                room.Writers.Add(writer);
+                room.PresentWriters.Add(writer);
+            }
+
+            if (room.AbsentWriters.Exists(w => w.Identifier == writer.Identifier))
+            {
+                room.AbsentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
             }
 
             return RedirectToAction("Room", new { Id = room.Code });
@@ -214,7 +242,8 @@ namespace StoryWriter.Controllers
             var room = RoomService.Create(roomName, writer);
             ApplicationService.AddRoom(room);
 
-            room.Writers.Add(writer);
+            // room.Writers.Add(writer);
+            room.PresentWriters.Add(writer);
 
             return RedirectToAction("FirstLine", new { Id = room.Code });
         }

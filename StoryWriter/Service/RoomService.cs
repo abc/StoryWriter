@@ -67,7 +67,8 @@ namespace StoryWriter.Service
 
             return new ServerUpdate
             {
-                WritersPresent = room.Writers,
+                PresentWriters = room.PresentWriters,
+                AbsentWriters = room.AbsentWriters,
                 TimeToVote = timeToAction,
                 SecondsToVote = secondsToAction,
                 FragmentsThisRound = room.FrameFragments,

@@ -8,9 +8,15 @@
 
 <h3>Co-Authors:</h3>
 <ul id="user-list">
-    @foreach (var user in Model.Writers)
+    @foreach (var user in Model.PresentWriters)
     {
         <li id="user-list-item">
+            @user.Name
+        </li>
+    }
+    @foreach (var user in Model.AbsentWriters)
+    {
+        <li id="user-list-item" style="text-decoration: line-through;">
             @user.Name
         </li>
     }
@@ -53,7 +59,7 @@
     </div>
 </div>
 <div>
-    <a href="~/Story/LeaveRoom">Leave this room</a>
+    <a href="~/Story/LeaveRoom/@Model.Code">Leave this room</a>
 </div>
 
 @section Scripts {
@@ -99,8 +105,11 @@
 
                 .done(function (data) {
                     $("#user-list").html("");
-                    data.WritersPresent.forEach((element) => {
+                    data.PresentWriters.forEach((element) => {
                          $("#user-list").append("<li>" + element.Name + "</li>");
+                    });
+                    data.AbsentWriters.forEach((element) => {
+                         $("#user-list").append('<li style="text-decoration: line-through;">' + element.Name + "</li>");
                     });
 
                     if (data.VotesChanged) {

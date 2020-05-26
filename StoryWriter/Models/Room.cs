@@ -25,7 +25,10 @@ namespace StoryWriter.Models
         /// <summary>
         /// The list of writers who are taking part in the story.
         /// </summary>
-        public List<Writer> Writers { get; set; }
+        // public List<Writer> Writers { get; set; }
+
+        public List<Writer> PresentWriters { get; set; } 
+        public List<Writer> AbsentWriters { get; set; }
 
         /// <summary>
         /// The all-important story itself.
@@ -39,7 +42,9 @@ namespace StoryWriter.Models
         /// </summary>
         public Room()
         {
-            Writers = new List<Writer>();
+            // Writers = new List<Writer>();
+            PresentWriters = new List<Writer>();
+            AbsentWriters = new List<Writer>();
             Story = new Story();
             StartTime = DateTime.Now;
             FrameFragments = new List<StoryFragment>();
