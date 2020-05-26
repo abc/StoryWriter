@@ -94,7 +94,7 @@
         function update() {
             let fragmentText = $("#nextLine").val();
 
-            var vote = $('#vote-area').find('input[name="vote"]').val();
+            var vote = $('#vote-area').find('input[name="vote"]:checked').val();
             var update = { SenderId: "@Session[SessionVariables.UserId]", Fragment: fragmentText, FragmentId: vote };
             
 
