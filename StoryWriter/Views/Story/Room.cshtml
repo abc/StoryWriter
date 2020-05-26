@@ -18,12 +18,8 @@
 
 <h3>The story so far:</h3>
 
-<div class="story-body">
-    <span class="story-element story-element-intro" data-author="@Model.Story.Intro.Author">@Model.Story.Intro.Text</span>
-    @foreach (var element in Model.Story.StoryFragments)
-    {
-        <span class="story-element" data-author="@element.Author.Name">@element.Text</span>
-    }
+<div class="story-body" id="story-body">
+   @Html.Partial("StoryText", Model.Story)
 </div>
 
 <form action="~/Story/AddLine/@Model.Code" method="post">
@@ -81,6 +77,16 @@
                             displayedVote = true;
                         }
                     }
+
+                    if (data.StoryUpdated) {
+                        $.ajax({
+                            url: "@Url.Content("~/Story/StoryText/" + Model.Code)",
+                        })
+                            .done(function (story) {
+                                $("#story-body").html(story);
+                            });
+                    }
+
                 if ( console && console.log ) {
                     console.log( data );
                 }

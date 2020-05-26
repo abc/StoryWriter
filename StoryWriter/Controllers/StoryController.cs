@@ -39,6 +39,23 @@ namespace StoryWriter.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult StoryText (string Id)
+        {
+            // ID = Room code.
+            var roomCode = Id.ToUpperInvariant();
+
+            // Try to find the room.
+            var room = ApplicationService.FindRoom(roomCode);
+
+            if (room == null)
+            {
+                SessionService.AddMessage(Session, "A room with that code could not be found, please check the code and try again.");
+                return null;
+            }
+
+            return PartialView(room.Story);
+        }
+
         public string Update(string Id, Guid SenderId, string Fragment, string FragmentId)
         {
             // ID = Room code.
@@ -72,7 +89,10 @@ namespace StoryWriter.Controllers
                 RoomService.RegisterVote(room, writer, FragmentId);
             }
 
-            var serverUpdate = RoomService.GetUpdate(room);
+            var serverUpdate = RoomService.GetUpdate(room, writer);
+
+            // Update the writer service to track this most recent update.
+            WriterService.WriterUpdate(writer, room.Story);
 
             Response.ContentType = "application/json";
             return JsonConvert.SerializeObject(serverUpdate);
@@ -233,7 +253,7 @@ namespace StoryWriter.Controllers
             return RedirectToAction("Room", new { Id = roomCode });
         }
 
-        public ActionResult Room (string Id)
+        public ActionResult Room (string Id = "")
         {
             var roomCode = Id;
 

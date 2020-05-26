@@ -13,5 +13,6 @@ namespace StoryWriter.Models
         public List<Writer> WritersPresent { get; set; }
         public bool TimeToVote { get; set; }
         public bool VotesChanged { get; set; }
+        public bool StoryUpdated { get; set; }
     }
 }

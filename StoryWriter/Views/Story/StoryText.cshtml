@@ -1,0 +1,7 @@
+﻿@model StoryWriter.Models.Story
+
+<span class="story-element story-element-intro" data-author="@Model.Intro.Author">@Model.Intro.Text</span>
+@foreach (var element in Model.StoryFragments)
+{
+    <span class="story-element" data-author="@element.Author.Name">@element.Text</span>
+}

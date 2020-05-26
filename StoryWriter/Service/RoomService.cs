@@ -57,14 +57,22 @@ namespace StoryWriter.Service
             room.FragmentVotes[writer.Identifier] = new Guid(fragmentId);
         }
 
-        public static ServerUpdate GetUpdate (Room room)
+        public static ServerUpdate GetUpdate (Room room, Writer writer)
         {
             var secondsToAction = (room.NextActionTime - DateTime.Now).Seconds;
             var timeToAction = secondsToAction <= 0;
             var fragmentsThisRound = new List<StoryFragment>();
             fragmentsThisRound.AddRange(room.FrameFragments);
+            var storyUpdated = ApplicationService.IsStoryUpdated(room, writer);
 
-            return new ServerUpdate { WritersPresent = room.Writers, TimeToVote = timeToAction, SecondsToVote = secondsToAction, FragmentsThisRound = room.FrameFragments };
+            return new ServerUpdate
+            {
+                WritersPresent = room.Writers,
+                TimeToVote = timeToAction,
+                SecondsToVote = secondsToAction,
+                FragmentsThisRound = room.FrameFragments,
+                StoryUpdated = storyUpdated
+            };
         }
 
         public static Dictionary<Guid, int> VotesToTotals (Dictionary<Guid, Guid> votes)

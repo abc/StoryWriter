@@ -52,6 +52,32 @@ namespace StoryWriter.Service
             
         }
 
+        public static bool IsStoryUpdated (Room room, Writer writer)
+        {
+            var lastStory = WriterService.GetLastFragmentId(writer);
+
+            if (lastStory == Guid.Empty)
+            {
+                return true;
+            }
+
+            if (room.Story.StoryFragments.Count > 0)
+            {
+                if (room.Story.StoryFragments.Last().Identifier != lastStory)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static void AddWriter(Writer writer)
         {
             Writers.Add(writer);
