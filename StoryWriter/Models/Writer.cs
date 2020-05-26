@@ -21,5 +21,7 @@ namespace StoryWriter.Models
         /// A guid is needed to uniquely identify the user.
         /// </summary>
         public Guid Identifier { get; set; }
+
+        public PlayerColor Color { get; set; }
     }
 }

@@ -22,10 +22,7 @@ namespace StoryWriter.Models
         /// </summary>
         public Writer Owner { get; set; }
 
-        /// <summary>
-        /// The list of writers who are taking part in the story.
-        /// </summary>
-        // public List<Writer> Writers { get; set; }
+        public List<PlayerColor> ColorsInUse { get; set; }
 
         public List<Writer> PresentWriters { get; set; } 
         public List<Writer> AbsentWriters { get; set; }
@@ -53,6 +50,7 @@ namespace StoryWriter.Models
             NextActionTime = DateTime.Now.AddSeconds(60);
             NextAction = ActionType.Vote;
             StartTime = DateTime.Now;
+            ColorsInUse = new List<PlayerColor>();
         }
 
         public DateTime LastUpdate { get; set; }

@@ -194,6 +194,20 @@ namespace StoryWriter.Controllers
                 return View(writer);
             }
 
+            if (writer.Color != null)
+            {
+                if (room.ColorsInUse.Any(c => c.Name == writer.Color.Name))
+                {
+                    writer.Color = ColorService.RandomColor(room.ColorsInUse);
+                }
+            }
+            else
+            {
+                writer.Color = ColorService.RandomColor(room.ColorsInUse);
+            }
+
+            room.ColorsInUse.Add(writer.Color);
+
             if (!room.PresentWriters.Exists(w => w.Identifier == writer.Identifier))
             {
                 room.PresentWriters.Add(writer);
@@ -244,6 +258,20 @@ namespace StoryWriter.Controllers
 
             // room.Writers.Add(writer);
             room.PresentWriters.Add(writer);
+
+            if (writer.Color != null)
+            {
+                if (room.ColorsInUse.Any(c => c.Name == writer.Color.Name))
+                {
+                    writer.Color = ColorService.RandomColor(room.ColorsInUse);
+                }
+            }
+            else
+            {
+                writer.Color = ColorService.RandomColor(room.ColorsInUse);
+            }
+
+            room.ColorsInUse.Add(writer.Color);
 
             return RedirectToAction("FirstLine", new { Id = room.Code });
         }

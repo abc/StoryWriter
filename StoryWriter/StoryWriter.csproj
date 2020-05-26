@@ -128,6 +128,7 @@
     </Compile>
     <Compile Include="Models\ActionType.cs" />
     <Compile Include="Models\ClientUpdate.cs" />
+    <Compile Include="Models\PlayerColor.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\Story.cs" />
     <Compile Include="Models\StoryFragment.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Models\Writer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\ApplicationService.cs" />
+    <Compile Include="Service\ColorService.cs" />
     <Compile Include="Service\RoomService.cs" />
     <Compile Include="Service\SessionService.cs" />
     <Compile Include="Service\ValidationService.cs" />

@@ -10,7 +10,7 @@
 <ul id="user-list">
     @foreach (var user in Model.PresentWriters)
     {
-        <li id="user-list-item">
+        <li id="user-list-item" style="color: @user.Color.HexCode;">
             @user.Name
         </li>
     }
@@ -103,10 +103,10 @@
                 .done(function (data) {
                     $("#user-list").html("");
                     data.PresentWriters.forEach((element) => {
-                         $("#user-list").append("<li>" + element.Name + "</li>");
+                        $("#user-list").append('<li style="color: '+element.Color.HexCode +';">' + element.Name + "</li>");
                     });
                     data.AbsentWriters.forEach((element) => {
-                         $("#user-list").append('<li style="text-decoration: line-through;">' + element.Name + "</li>");
+                         $("#user-list").append('<li style="text-decoration: line-through; color: '+element.Color.HexCode +';"">' + element.Name + "</li>");
                     });
 
                     if (data.VotesChanged) {
