@@ -9,6 +9,33 @@ namespace StoryWriter.Service
 {
     public static class RoomService
     {
+        public static Dictionary<string, string> RoomConnections = new Dictionary<string, string>();
+
+        public static void LinkRoomToConnection(string roomCode, string connectionId)
+        {
+            if (RoomConnections.ContainsKey(roomCode))
+            {
+                RoomConnections[roomCode] = connectionId;
+            }
+            else
+            {
+                RoomConnections.Add(roomCode, connectionId);
+            }
+        }
+
+        public static Room GetRoomFromConnection(string connectionId)
+        {
+            var room = RoomConnections.Where(w => w.Value == connectionId);
+
+            if (!room.Any())
+            {
+                return null;
+            }
+
+            var roomCode = room.Single().Key;
+            return ApplicationService.FindRoom(roomCode);
+        }
+
         /// <summary>
         /// Generate a four-character code used to join a session in progress.
         /// </summary>

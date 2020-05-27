@@ -10,6 +10,33 @@ namespace StoryWriter.Service
     {
         public static Dictionary<Guid, Guid> LastFragments = new Dictionary<Guid, Guid>();
 
+        public static Dictionary<Guid, string> WriterConnections = new Dictionary<Guid, string>();
+
+        public static void LinkWriterToConnection (Guid writerId, string connectionId)
+        {
+            if (WriterConnections.ContainsKey(writerId))
+            {
+                WriterConnections[writerId] = connectionId;
+            }
+            else
+            {
+                WriterConnections.Add(writerId, connectionId);
+            }
+        }
+
+        public static Writer GetWriterFromConnection(string connectionId)
+        {
+            var writer = WriterConnections.Where(w => w.Value == connectionId);
+
+            if (!writer.Any())
+            {
+                return null;
+            }
+
+            var writerId = writer.Single().Key;
+            return ApplicationService.FindWriter(writerId);
+        }
+
         public static Writer Create(string username)
         {
             return new Writer { Identifier = Guid.NewGuid(), Name = username, Score = 0 };

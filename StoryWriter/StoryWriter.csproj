@@ -145,7 +145,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\ChatHub.cs" />
+    <Compile Include="Hubs\StoryHub.cs" />
     <Compile Include="Models\ActionType.cs" />
     <Compile Include="Models\ClientUpdate.cs" />
     <Compile Include="Models\PlayerColor.cs" />
