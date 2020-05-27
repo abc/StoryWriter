@@ -17,24 +17,24 @@ namespace StoryWriter.Service
         {
             if (RoomConnections.ContainsKey(roomCode))
             {
-                RoomConnections[roomCode] = connectionId;
+                RoomConnections[connectionId] = roomCode;
             }
             else
             {
-                RoomConnections.Add(roomCode, connectionId);
+                RoomConnections.Add(connectionId, roomCode);
             }
         }
 
         public static Room GetRoomFromConnection(string connectionId)
         {
-            var room = RoomConnections.Where(w => w.Value == connectionId);
+            var room = RoomConnections.Where(w => w.Key == connectionId);
 
             if (!room.Any())
             {
                 return null;
             }
 
-            var roomCode = room.Single().Key;
+            var roomCode = room.Single().Value;
             return ApplicationService.FindRoom(roomCode);
         }
 

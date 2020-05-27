@@ -38,8 +38,9 @@ $(function () {
     };
 
     story.client.startVoting = function (room) {
+        processUpdate(room);
         let fragments = room.FrameFragments;
-
+        
         $("#vote-area").empty();
 
         fragments.forEach((element) => {
@@ -51,12 +52,17 @@ $(function () {
     };
 
     story.client.startWriting = function (room) {
+        processUpdate(room);
         $.ajax({
             url: rootPath + "/Story/StoryText/" + roomCode,
                 })
         .done(function (story) {
             $("#story-body").html(story);
             $("#vote-area").empty();
+            $("#fragment-area").html('<label for="nextLine">Next line of the story:</label>');
+            $("#fragment-area").append('<input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />');
+            $("#fragment-area").append('<input class="btn" type="button" value="Submit" id="submit-fragment" />');
+            setupFragmentSubmission();
         });
     }
 
