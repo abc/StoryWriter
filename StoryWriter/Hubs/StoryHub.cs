@@ -69,7 +69,7 @@ namespace StoryWriter.Hubs
             Clients.Group("room-" + room.Code).voteCast(writer.Identifier, fragmentId);
         }
 
-        public void SubmitLine(string fragment)
+        public void SubmitFragment(string fragment)
         {
             var writer = WriterService.GetWriterFromConnection(Context.ConnectionId);
             var room = RoomService.GetRoomFromConnection(Context.ConnectionId);

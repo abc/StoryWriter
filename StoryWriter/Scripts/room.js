@@ -40,6 +40,13 @@
         story.server.joinRoom(writerId, roomCode);
     }
 
+    function setupFragmentSubmission() {
+        $('#submit-fragment').click(function () {
+            story.server.submitFragment($('#nextLine').val());
+            $("#fragment-area").html("");
+        });
+    }
+
     // Start the connection.
     $.connection.hub.start().done(function () {
         joinRoom();
@@ -47,6 +54,8 @@
         $('#leave-room').click(function () {
             leaveRoom();
         });
+
+        setupFragmentSubmission();
 
         $('#sendmessage').click(function () {
             // Call the Send method on the hub.
