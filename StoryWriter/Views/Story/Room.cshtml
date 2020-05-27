@@ -25,20 +25,19 @@
 <h3>The story so far:</h3>
 
 <div class="story-body" id="story-body">
-   @Html.Partial("StoryText", Model.Story)
+    @Html.Partial("StoryText", Model.Story)
 </div>
 
 
 
 <div id="vote-container">
     <form id="vote-area">
-
     </form>
 </div>
 <div class="row">
     <div class="col-xl-9 col-lg-6 mb-4">
-    <label for="nextLine">Next line of the story:</label>
-    <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
+        <label for="nextLine">Next line of the story:</label>
+        <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
     </div>
     <div class="col-xl-3 col-lg-6 mb-4">
         <h2 class="h6 font-weight-bold text-center mb-4">Time Left</h2>
@@ -56,11 +55,20 @@
     </div>
 </div>
 <div>
-    <a href="~/Story/LeaveRoom/@Model.Code">Leave this room</a>
+    <a id="leave-room" href="#">Leave this room</a>
 </div>
 
-@section Scripts {
-    <script>
+@section Scripts
+{
+    <script type="text/javascript">
+        @{ 
+            var strPathAndQuery = HttpContext.Current.Request.Url.PathAndQuery;
+            var strUrl = HttpContext.Current.Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
+        }
+        writerId = '@ViewBag.Writer.Identifier';
+        roomCode = '@Model.Code';
+        rootPath = '@strUrl';
+
         var progressMax = 60;
 
         function percentageToDegrees(percentage, max)
@@ -85,102 +93,74 @@
                 }
             });
         }
-
-        let displayedVote = false;
-
-        let socket = new WebSocket("wss://javascript.info/article/websocket/demo/hello");
-
-            socket.onopen = function(e) {
-              alert("[open] Connection established");
-              alert("Sending to server");
-              socket.send("My name is John");
-            };
-
-            socket.onmessage = function(event) {
-              alert(`[message] Data received from server: ${event.data}`);
-            };
-
-            socket.onclose = function(event) {
-              if (event.wasClean) {
-                alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-              } else {
-                // e.g. server process killed or network down
-                // event.code is usually 1006 in this case
-                alert('[close] Connection died');
-              }
-            };
-
-            socket.onerror = function(error) {
-              alert(`[error] ${error.message}`);
-            };
-
-        @*
-
-        function update() {
-            let fragmentText = $("#nextLine").val();
-
-            var vote = $('#vote-area').find('input[name="vote"]:checked').val();
-            var update = { SenderId: "@Session[SessionVariables.UserId]", Fragment: fragmentText, FragmentId: vote };
-            
-
-            $.ajax({
-                url: "@Url.Content("~/Story/Update/" + Model.Code)",
-                data: update,
-            })
-
-                .done(function (data) {
-                    $("#user-list").html("");
-                    data.PresentWriters.forEach((element) => {
-                        $("#user-list").append('<li style="color: '+element.Color.HexCode +';">' + element.Name + "</li>");
-                    });
-                    data.AbsentWriters.forEach((element) => {
-                         $("#user-list").append('<li style="text-decoration: line-through; color: '+element.Color.HexCode +';"">' + element.Name + "</li>");
-                    });
-
-                    if (data.VotesChanged) {
-                        displayedVote = false;
-                    }
-
-                    if (data.TimeToVote) {
-                        let fragments = data.FragmentsThisRound;
-
-                        if (!displayedVote) {
-                            $("#vote-area").empty();
-
-                            fragments.forEach((element) => {
-                                $("#vote-area").append("<div><input type=\"radio\" id=\"radio-"+element.Identifier+"\" name=\"vote\" value=\""+element.Identifier+"\">" + element.Text + "</input></div>")
-                            });
-
-                            displayedVote = true;
-                        }
-                    }
-
-                    if (data.StoryUpdated) {
-                        $.ajax({
-                            url: "@Url.Content("~/Story/StoryText/" + Model.Code)",
-                        })
-                            .done(function (story) {
-                                $("#story-body").html(story);
-                                $("#vote-area").empty();
-                            });
-
-                    }
-
-                    $('#countdown-timer').attr('data-value', data.SecondsToVote);
-                    $('#seconds-to-vote').html(data.SecondsToVote);
-
-                    updateTimer();
-
-                if ( console && console.log ) {
-                    console.log( data );
-                }
-            });
-        }
-
-        setInterval(function () {
-            update();
-        }, 1000);
-        *@
-
     </script>
+    <script src="~/Scripts/room.js"></script>
 }
+
+@*
+
+function update() {
+    let fragmentText = $("#nextLine").val();
+
+    var vote = $('#vote-area').find('input[name="vote"]:checked').val();
+    var update = { SenderId: "@Session[SessionVariables.UserId]", Fragment: fragmentText, FragmentId: vote };
+
+
+    $.ajax({
+        url: "@Url.Content("~/Story/Update/" + Model.Code)",
+        data: update,
+    })
+
+        .done(function (data) {
+            $("#user-list").html("");
+            data.PresentWriters.forEach((element) => {
+                $("#user-list").append('<li style="color: '+element.Color.HexCode +';">' + element.Name + "</li>");
+            });
+            data.AbsentWriters.forEach((element) => {
+                    $("#user-list").append('<li style="text-decoration: line-through; color: '+element.Color.HexCode +';"">' + element.Name + "</li>");
+            });
+
+            if (data.VotesChanged) {
+                displayedVote = false;
+            }
+
+            if (data.TimeToVote) {
+                let fragments = data.FragmentsThisRound;
+
+                if (!displayedVote) {
+                    $("#vote-area").empty();
+
+                    fragments.forEach((element) => {
+                        $("#vote-area").append("<div><input type=\"radio\" id=\"radio-"+element.Identifier+"\" name=\"vote\" value=\""+element.Identifier+"\">" + element.Text + "</input></div>")
+                    });
+
+                    displayedVote = true;
+                }
+            }
+
+            if (data.StoryUpdated) {
+                $.ajax({
+                    url: "@Url.Content("~/Story/StoryText/" + Model.Code)",
+                })
+                    .done(function (story) {
+                        $("#story-body").html(story);
+                        $("#vote-area").empty();
+                    });
+
+            }
+
+            $('#countdown-timer').attr('data-value', data.SecondsToVote);
+            $('#seconds-to-vote').html(data.SecondsToVote);
+
+            updateTimer();
+
+        if ( console && console.log ) {
+            console.log( data );
+        }
+    });
+}
+
+setInterval(function () {
+    update();
+}, 1000);
+*@

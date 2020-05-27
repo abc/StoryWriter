@@ -324,6 +324,15 @@ namespace StoryWriter.Controllers
 
             Session[SessionVariables.RoomCode] = room.Code;
 
+            var writer = SessionService.GetWriter(Session[SessionVariables.UserId]);
+
+            if (writer == null)
+            {
+                throw new InvalidOperationException("Unable to join a room, you are unidentified.");
+            }
+
+            ViewBag.Writer = writer;
+
             return View(room);
         }
     }
