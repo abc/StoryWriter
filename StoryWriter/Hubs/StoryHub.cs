@@ -72,7 +72,12 @@ namespace StoryWriter.Hubs
 
             if (!string.IsNullOrWhiteSpace(fragmentId))
             {
-                RoomService.RegisterVote(room, writer, fragmentId);
+                var fragment = room.FrameFragments.Where(f => f.Identifier.ToString() == fragmentId).Single();
+                if (fragment.Author.Identifier != writer.Identifier)
+                {
+                    // Refuse to register votes for fragments the user wrote themselves.
+                    RoomService.RegisterVote(room, writer, fragmentId);
+                }
             }
 
             // Notify the other users of the cast vote.

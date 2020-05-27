@@ -53,7 +53,9 @@ $(function () {
         $("#vote-area").empty();
 
         fragments.forEach((element) => {
-            $("#vote-area").append("<div><input type=\"radio\" id=\"radio-" + element.Identifier + "\" name=\"vote\" value=\"" + element.Identifier + "\">" + element.Text + "</input></div>");
+            if (element.Author.Identifier != writerId) {
+                $("#vote-area").append("<div><input type=\"radio\" id=\"radio-" + element.Identifier + "\" name=\"vote\" value=\"" + element.Identifier + "\">" + element.Text + "</input></div>");
+            }
         });
 
         $("#vote-area").append('<input type="button" id="cast-vote" value="Vote!" />');
