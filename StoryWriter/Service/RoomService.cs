@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using StoryWriter.Models;
 using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace StoryWriter.Service
 {
@@ -58,7 +60,10 @@ namespace StoryWriter.Service
 
         public static Room Create (string roomName, Writer owner)
         {
-            return new Room { Code = GenerateCode(), Name = roomName, Owner = owner };
+            var room = new Room { Code = GenerateCode(), Name = roomName, Owner = owner };
+            Task taskA = new Task(() => { while (true) { ApplicationService.GameUpdate(room); Thread.Sleep(1000); } });
+            taskA.Start();
+            return room;
         }
 
         public static void RegisterFragment (Room room, Writer writer, string fragment)

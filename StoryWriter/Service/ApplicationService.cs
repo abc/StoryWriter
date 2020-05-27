@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using StoryWriter.Models;
+using Microsoft.AspNet.SignalR;
 
 namespace StoryWriter.Service
 {
@@ -16,13 +17,8 @@ namespace StoryWriter.Service
 
         public static void GameUpdate(Room room)
         {
-            // Only update every ten seconds.
-            if (!(room.LastUpdate.AddSeconds(10) <= DateTime.Now))
-            {
-                return;
-            }
-
             room.LastUpdate = DateTime.Now;
+            var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
 
             var timeToNextAction = room.NextActionTime - DateTime.Now;
             var seconds = timeToNextAction.Seconds;
@@ -33,6 +29,7 @@ namespace StoryWriter.Service
             {
                 room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
                 room.NextAction = ActionType.TallyVotes;
+                context.Clients.Group("room-" + room.Code).startVoting(room);
                 return;
             }
 
@@ -42,14 +39,19 @@ namespace StoryWriter.Service
                 room.NextActionTime = DateTime.Now.AddMinutes(1);
 
                 var totals = RoomService.VotesToTotals(room.FragmentVotes);
-                var winner = totals.OrderByDescending(w => w.Value).First();
-
-                room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winner.Key).Single());
+                var winners = totals.OrderByDescending(w => w.Value);
+                if (winners.Any())
+                {
+                    room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winners.First().Key).Single());
+                }
+                
                 room.FrameFragments.Clear();
                 room.FragmentVotes.Clear();
+                context.Clients.Group("room-" + room.Code).startWriting(room);
                 return;
             }
-            
+
+            // context.Clients.Group("room-" + room.Code).update(room);
         }
 
         public static bool IsStoryUpdated (Room room, Writer writer)

@@ -10,6 +10,11 @@ namespace StoryWriter.Hubs
 {
     public class StoryHub : Hub
     {
+        public void SendUpdate (Models.Room room)
+        {
+            Clients.Group("room-" + room.Code).update(room);
+        }
+
         public void Send(string name, string message, string roomcode)
         {
             // Call the broadcastMessage method to update clients.
@@ -42,12 +47,14 @@ namespace StoryWriter.Hubs
             RoomService.LinkRoomToConnection(roomCode, Context.ConnectionId);
 
             var writer = ApplicationService.FindWriter(writerId);
+            var room = ApplicationService.FindRoom(roomCode);
 
             // Add the user to the room.
             this.Groups.Add(this.Context.ConnectionId, "room-" + roomCode);
             
             // Notify other users in the room that the user joined.
             Clients.Group("room-" + roomCode).userJoined(writer);
+            Clients.Client(Context.ConnectionId).welcome(room);
         }
 
         public void CastVote(string fragmentId)
