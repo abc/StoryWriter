@@ -16,15 +16,24 @@ $(function () {
             + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
     };
 
+    function updateWriters(room) {
+        $("#user-list").html("");
+        room.PresentWriters.forEach((element) => {
+            $("#user-list").append('<li style="color: ' + element.Color.HexCode + ';">' + element.Name + "</li>");
+        });
+        room.AbsentWriters.forEach((element) => {
+            $("#user-list").append('<li style="text-decoration: line-through; color: ' + element.Color.HexCode + ';"">' + element.Name + "</li>");
+        });
+    }
 
-    story.client.userLeft = function (user) {
-        console.log("User left:");
-        console.log(user);
+    story.client.userLeft = function (users) {
+        console.log("User left.");
+        updateWriters(users);
     };
 
-    story.client.userJoined = function (user) {
-        console.log("User joined:");
-        console.log(user);
+    story.client.userJoined = function (users) {
+        console.log("User joined.");
+        updateWriters(users);
     };
 
     story.client.voteCast = function (userId, fragmentId) {

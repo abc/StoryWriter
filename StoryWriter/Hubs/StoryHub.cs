@@ -36,8 +36,11 @@ namespace StoryWriter.Hubs
             // Remove the user from the room.
             this.Groups.Remove(Context.ConnectionId, "room-" + room.Code);
 
+            room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
+            room.AbsentWriters.Add(writer);
+
             // Notify other users in the room that the user left.
-            Clients.Group("room-" + room.Code).userLeft(writer);
+            Clients.Group("room-" + room.Code).userLeft(room);
         }
 
         public void JoinRoom (Guid writerId, string roomCode)
@@ -53,7 +56,7 @@ namespace StoryWriter.Hubs
             this.Groups.Add(this.Context.ConnectionId, "room-" + roomCode);
             
             // Notify other users in the room that the user joined.
-            Clients.Group("room-" + roomCode).userJoined(writer);
+            Clients.Group("room-" + roomCode).userJoined(room);
             Clients.Client(Context.ConnectionId).welcome(room);
         }
 
