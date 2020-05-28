@@ -22,6 +22,28 @@ namespace StoryWriter.Hubs
             Clients.Group("room-" + roomcode).broadcastMessage(name, message);
         }
 
+        public override Task OnDisconnected(bool stopCalled)
+        {
+
+            // Find the writer and the room.
+            var writer = WriterService.GetWriterFromConnection(Context.ConnectionId);
+            var room = RoomService.GetRoomFromConnection(Context.ConnectionId);
+
+            if ((writer != null) || (room != null))
+            {
+                // Remove the user from the room.
+                this.Groups.Remove(Context.ConnectionId, "room-" + room.Code);
+
+                room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
+                room.AbsentWriters.Add(writer);
+
+                // Notify other users in the room that the user left.
+                Clients.Group("room-" + room.Code).userLeft(room);
+            }
+
+            return base.OnDisconnected(stopCalled);
+        }
+
         public void LeaveRoom ()
         {
             // Find the writer and the room.
