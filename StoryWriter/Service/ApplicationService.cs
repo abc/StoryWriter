@@ -9,10 +9,59 @@ namespace StoryWriter.Service
 {
     public static class ApplicationService
     {
+        public static Random AppRng = new System.Random();
+
         public static void Initialize()
         {
             Rooms = new List<Room>();
             Writers = new List<Writer>();
+        }
+
+        public static Guid SelectWinner (Dictionary<Guid, int> pointTotals)
+        {
+            var winners = pointTotals.OrderByDescending(w => w.Value);
+
+            if (winners.Any())
+            {
+                var fragmentsWithTopScore = winners.Where(w => w.Value == winners.First().Value);
+                
+                var count = winners.Count();
+                var index = AppRng.Next(0, count);
+                var winner = fragmentsWithTopScore.ToArray()[index];
+                return winner.Key;
+            }
+            else
+            {
+                return Guid.Empty;
+            }
+        }
+        
+        public static void TallyVotes (Room room)
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
+
+            room.NextAction = ActionType.Vote;
+            room.NextActionTime = DateTime.Now.AddMinutes(1);
+
+            var totals = RoomService.VotesToTotals(room.FragmentVotes);
+            var winner = SelectWinner(totals);
+
+            room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winner).Single());
+
+            room.FrameFragments.Clear();
+            room.FragmentVotes.Clear();
+            context.Clients.Group("room-" + room.Code).startWriting(room);
+            return;
+        }
+
+        public static void Vote (Room room)
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
+
+            room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
+            room.NextAction = ActionType.TallyVotes;
+            context.Clients.Group("room-" + room.Code).startVoting(room);
+            return;
         }
 
         public static void GameUpdate(Room room)
@@ -23,10 +72,7 @@ namespace StoryWriter.Service
                 return;
             }
 
-            var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
-
             var timeToNextAction = room.NextActionTime - DateTime.Now;
-            var seconds = timeToNextAction.Seconds;
 
             var timeToTakeAction = room.NextActionTime <= DateTime.Now;
 
@@ -36,57 +82,28 @@ namespace StoryWriter.Service
 
             if (timeToTakeAction && room.NextAction == ActionType.Vote)
             {
-                room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
-                room.NextAction = ActionType.TallyVotes;
-                context.Clients.Group("room-" + room.Code).startVoting(room);
+                Vote(room);
                 return;
             }
 
             if (totalFrames >= activeUsers && room.NextAction == ActionType.Vote)
             {
-                room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
-                room.NextAction = ActionType.TallyVotes;
-                context.Clients.Group("room-" + room.Code).startVoting(room);
+                Vote(room);
                 return;
             }
 
             if (timeToTakeAction && room.NextAction == ActionType.TallyVotes)
             {
-                room.NextAction = ActionType.Vote;
-                room.NextActionTime = DateTime.Now.AddMinutes(1);
-
-                var totals = RoomService.VotesToTotals(room.FragmentVotes);
-                var winners = totals.OrderByDescending(w => w.Value);
-                if (winners.Any())
-                {
-                    room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winners.First().Key).Single());
-                }
-                
-                room.FrameFragments.Clear();
-                room.FragmentVotes.Clear();
-                context.Clients.Group("room-" + room.Code).startWriting(room);
+                TallyVotes(room);
                 return;
             }
 
             if (totalVotes >= activeUsers && room.NextAction == ActionType.TallyVotes)
             {
-                room.NextAction = ActionType.Vote;
-                room.NextActionTime = DateTime.Now.AddMinutes(1);
-
-                var totals = RoomService.VotesToTotals(room.FragmentVotes);
-                var winners = totals.OrderByDescending(w => w.Value);
-                if (winners.Any())
-                {
-                    room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winners.First().Key).Single());
-                }
-
-                room.FrameFragments.Clear();
-                room.FragmentVotes.Clear();
-                context.Clients.Group("room-" + room.Code).startWriting(room);
+                TallyVotes(room);
                 return;
             }
 
-            // context.Clients.Group("room-" + room.Code).update(room);
         }
 
         public static bool IsStoryUpdated (Room room, Writer writer)

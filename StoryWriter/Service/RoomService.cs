@@ -44,14 +44,12 @@ namespace StoryWriter.Service
         /// <returns></returns>
         public static string GenerateCode()
         {
-            var random = new System.Random();
-
             const string pool = "abcdefghijklmnopqrstuvwxyz";
             var builder = new StringBuilder();
 
             for (var i = 0; i < 4; i++)
             {
-                var c = pool[random.Next(0, pool.Length)];
+                var c = pool[ApplicationService.AppRng.Next(0, pool.Length)];
                 builder.Append(c);
             }
 
