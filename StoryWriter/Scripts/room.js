@@ -1,6 +1,5 @@
 ﻿var thisRoom;
 var secondsToAction;
-var nextActionTime;
 var nextAction;
 
 $(function () {
@@ -120,7 +119,10 @@ $(function () {
     function processUpdate(room) {
         console.log(room);
         thisRoom = room;
-        nextActionTime = new Date(thisRoom.NextActionTime);
+        nextActionTime = new Date();
+        nextActionTime = nextActionTime.getTime() + room.MillisecondsToAction;
+        console.log("Update");
+        console.log(nextActionTime);
 
         if (room.Started) {
             $('#timer-area').removeClass('d-none');

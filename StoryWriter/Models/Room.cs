@@ -64,5 +64,6 @@ namespace StoryWriter.Models
         public ActionType NextAction { get; set; }
         public DateTime StartTime { get; set; }
         public List<StoryFragment> FrameFragments { get; set; }
+        public int MillisecondsToAction { get { return (int)Math.Round((NextActionTime - DateTime.Now).TotalMilliseconds); } }
     }
 }
