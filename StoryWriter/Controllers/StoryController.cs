@@ -56,48 +56,6 @@ namespace StoryWriter.Controllers
             return PartialView(room.Story);
         }
 
-        public string Update(string Id, Guid SenderId, string Fragment, string FragmentId)
-        {
-            // ID = Room code.
-            var roomCode = Id.ToUpperInvariant();
-
-            var writer = SessionService.GetWriter(Session[SessionVariables.UserId]);
-
-            if (writer == null)
-            {
-                throw new InvalidOperationException("Unable to join a room, you are unidentified.");
-            }
-
-            // Try to find the room.
-            var room = ApplicationService.FindRoom(roomCode);
-
-            if (room == null)
-            {
-                SessionService.AddMessage(Session, "A room with that code could not be found, please check the code and try again.");
-                return null;
-            }
-
-            ApplicationService.GameUpdate(room);
-
-            if (!string.IsNullOrWhiteSpace(Fragment))
-            {
-                RoomService.RegisterFragment(room, writer, Fragment);
-            }
-
-            if (!string.IsNullOrWhiteSpace(FragmentId))
-            {
-                RoomService.RegisterVote(room, writer, FragmentId);
-            }
-
-            var serverUpdate = RoomService.GetUpdate(room, writer);
-
-            // Update the writer service to track this most recent update.
-            WriterService.WriterUpdate(writer, room.Story);
-
-            Response.ContentType = "application/json";
-            return JsonConvert.SerializeObject(serverUpdate);
-        }
-
         public ActionResult LeaveRoom(string Id)
         {
             // ID = Room code.
