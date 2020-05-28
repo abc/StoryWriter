@@ -25,7 +25,19 @@ namespace StoryWriter.Service
 
             var timeToTakeAction = room.NextActionTime <= DateTime.Now;
 
+            var activeUsers = room.PresentWriters.Count;
+            var totalFrames = room.FrameFragments.Count;
+            var totalVotes = room.FragmentVotes.Count;
+
             if (timeToTakeAction && room.NextAction == ActionType.Vote)
+            {
+                room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
+                room.NextAction = ActionType.TallyVotes;
+                context.Clients.Group("room-" + room.Code).startVoting(room);
+                return;
+            }
+
+            if (totalFrames >= activeUsers && room.NextAction == ActionType.Vote)
             {
                 room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
                 room.NextAction = ActionType.TallyVotes;
@@ -45,6 +57,24 @@ namespace StoryWriter.Service
                     room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winners.First().Key).Single());
                 }
                 
+                room.FrameFragments.Clear();
+                room.FragmentVotes.Clear();
+                context.Clients.Group("room-" + room.Code).startWriting(room);
+                return;
+            }
+
+            if (totalVotes >= activeUsers && room.NextAction == ActionType.TallyVotes)
+            {
+                room.NextAction = ActionType.Vote;
+                room.NextActionTime = DateTime.Now.AddMinutes(1);
+
+                var totals = RoomService.VotesToTotals(room.FragmentVotes);
+                var winners = totals.OrderByDescending(w => w.Value);
+                if (winners.Any())
+                {
+                    room.Story.StoryFragments.Add(room.FrameFragments.Where(f => f.Identifier == winners.First().Key).Single());
+                }
+
                 room.FrameFragments.Clear();
                 room.FragmentVotes.Clear();
                 context.Clients.Group("room-" + room.Code).startWriting(room);
