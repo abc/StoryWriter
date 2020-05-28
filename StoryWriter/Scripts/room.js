@@ -31,6 +31,12 @@ $(function () {
         updateWriters(users);
     };
 
+    story.client.gameStarted = function (room) {
+        console.log("Game started.");
+        processUpdate(room);
+        update();
+    }
+
     story.client.userJoined = function (users) {
         console.log("User joined.");
         updateWriters(users);
@@ -83,7 +89,9 @@ $(function () {
 
     story.client.welcome = function (room) {
         processUpdate(room);
-        update();
+        if (room.Started) {
+            update();
+        }
     }
 
     function leaveRoom() {
@@ -113,6 +121,10 @@ $(function () {
         console.log(room);
         thisRoom = room;
         nextActionTime = new Date(thisRoom.NextActionTime);
+
+        if (room.Started) {
+            $('#timer-area').removeClass('d-none');
+        }
     }
 
     function update() {
@@ -132,6 +144,12 @@ $(function () {
 
         $('#leave-room').click(function () {
             leaveRoom();
+        });
+
+        $('#start-game').click(function () {
+            
+            story.server.startGame();
+            $('#start-game').remove();
         });
 
         setupFragmentSubmission();

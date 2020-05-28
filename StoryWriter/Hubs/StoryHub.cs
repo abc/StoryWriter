@@ -22,6 +22,30 @@ namespace StoryWriter.Hubs
             Clients.Group("room-" + roomcode).broadcastMessage(name, message);
         }
 
+        public void StartGame()
+        {
+            var writer = WriterService.GetWriterFromConnection(Context.ConnectionId);
+            var room = RoomService.GetRoomFromConnection(Context.ConnectionId);
+
+            if ((writer == null) || (room == null))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (room.Owner.Identifier != writer.Identifier)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (room.Started)
+            {
+                throw new InvalidOperationException();
+            }
+
+            room.Start();
+            Clients.Group("room-" + room.Code).gameStarted(room);
+        }
+
         public override Task OnDisconnected(bool stopCalled)
         {
 

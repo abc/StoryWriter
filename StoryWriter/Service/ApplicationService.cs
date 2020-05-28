@@ -18,6 +18,11 @@ namespace StoryWriter.Service
         public static void GameUpdate(Room room)
         {
             room.LastUpdate = DateTime.Now;
+            if (!room.Started)
+            {
+                return;
+            }
+
             var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
 
             var timeToNextAction = room.NextActionTime - DateTime.Now;

@@ -24,8 +24,17 @@ namespace StoryWriter.Models
 
         public List<PlayerColor> ColorsInUse { get; set; }
 
-        public List<Writer> PresentWriters { get; set; } 
+        public List<Writer> PresentWriters { get; set; }
         public List<Writer> AbsentWriters { get; set; }
+
+        public bool Started { get; set; }
+
+        public void Start()
+        {
+            Started = true;
+            NextActionTime = DateTime.Now.AddSeconds(60);
+            StartTime = DateTime.Now;
+        }
 
         /// <summary>
         /// The all-important story itself.
@@ -43,13 +52,10 @@ namespace StoryWriter.Models
             PresentWriters = new List<Writer>();
             AbsentWriters = new List<Writer>();
             Story = new Story();
-            StartTime = DateTime.Now;
             FrameFragments = new List<StoryFragment>();
             FragmentVotes = new Dictionary<Guid, Guid>();
             LastUpdate = DateTime.Now;
-            NextActionTime = DateTime.Now.AddSeconds(60);
             NextAction = ActionType.Vote;
-            StartTime = DateTime.Now;
             ColorsInUse = new List<PlayerColor>();
         }
 
