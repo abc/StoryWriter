@@ -34,6 +34,7 @@ $(function () {
         console.log("Game started.");
         processUpdate(room);
         update();
+        setupWriting();
     }
 
     story.client.userJoined = function (users) {
@@ -73,13 +74,16 @@ $(function () {
             url: rootPath + "/Story/StoryText/" + roomCode,
                 })
         .done(function (story) {
-            $("#story-body").html(story);
-            $("#vote-area").empty();
-            $("#fragment-area").html('<label for="nextLine">Next line of the story:</label>');
-            $("#fragment-area").append('<input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />');
-            $("#fragment-area").append('<input class="btn" type="button" value="Submit" id="submit-fragment" />');
-            setupFragmentSubmission();
+            setupWriting();
         });
+    }
+
+    function setupWriting() {
+        $("#vote-area").empty();
+        $("#fragment-area").html('<label for="nextLine">Next line of the story:</label>');
+        $("#fragment-area").append('<input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />');
+        $("#fragment-area").append('<input class="btn" type="button" value="Submit" id="submit-fragment" />');
+        setupFragmentSubmission();
     }
 
     story.client.update = function (room) {
@@ -89,6 +93,9 @@ $(function () {
     story.client.welcome = function (room) {
         processUpdate(room);
         if (room.Started) {
+            if (room.nextAction == 0) {
+                setupWriting();
+            }
             update();
         }
     }
@@ -149,7 +156,6 @@ $(function () {
         });
 
         $('#start-game').click(function () {
-            
             story.server.startGame();
             $('#start-game').remove();
         });
