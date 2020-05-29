@@ -25,7 +25,7 @@ namespace StoryWriter.Service
             {
                 var fragmentsWithTopScore = winners.Where(w => w.Value == winners.First().Value);
                 
-                var count = winners.Count();
+                var count = fragmentsWithTopScore.Count();
                 var index = AppRng.Next(0, count);
                 var winner = fragmentsWithTopScore.ToArray()[index];
                 return winner.Key;

@@ -73,7 +73,8 @@ $(function () {
         $.ajax({
             url: rootPath + "/Story/StoryText/" + roomCode,
                 })
-        .done(function (story) {
+            .done(function (story) {
+            $("#story-body").html(story);
             setupWriting();
         });
     }
