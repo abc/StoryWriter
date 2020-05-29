@@ -3,6 +3,7 @@ var secondsToAction;
 var nextAction;
 
 $(function () {
+    let updateRunning = false;
     // Declare a proxy to reference the hub.
     var story = $.connection.storyHub;
     // Create a function that the hub can call to broadcast messages.
@@ -33,7 +34,7 @@ $(function () {
     story.client.gameStarted = function (room) {
         console.log("Game started.");
         processUpdate(room);
-        update();
+        startUpdating();
         setupWriting();
     }
 
@@ -79,6 +80,12 @@ $(function () {
         });
     }
 
+    function startUpdating() {
+        if (!updateRunning) {
+            update();
+        }
+    }
+
     function setupWriting() {
         $("#vote-area").empty();
         $("#fragment-area").html('<label for="nextLine">Next line of the story:</label>');
@@ -97,7 +104,7 @@ $(function () {
             if (room.nextAction == 0) {
                 setupWriting();
             }
-            update();
+            startUpdating();
         }
     }
 
