@@ -79,8 +79,8 @@ namespace StoryWriter.Controllers
 
             Session[SessionVariables.RoomCode] = null;
 
-            room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
-            room.AbsentWriters.Add(writer);
+            // room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
+            // room.AbsentWriters.Add(writer);
 
             return RedirectToAction("Index");
         }
@@ -166,6 +166,7 @@ namespace StoryWriter.Controllers
 
             room.ColorsInUse.Add(writer.Color);
 
+            /*
             if (!room.PresentWriters.Exists(w => w.Identifier == writer.Identifier))
             {
                 room.PresentWriters.Add(writer);
@@ -175,6 +176,7 @@ namespace StoryWriter.Controllers
             {
                 room.AbsentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
             }
+            */
 
             return RedirectToAction("Room", new { Id = room.Code });
         }
@@ -215,7 +217,7 @@ namespace StoryWriter.Controllers
             ApplicationService.AddRoom(room);
 
             // room.Writers.Add(writer);
-            room.PresentWriters.Add(writer);
+            // room.PresentWriters.Add(writer);
 
             if (writer.Color != null)
             {

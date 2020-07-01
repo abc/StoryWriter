@@ -100,7 +100,10 @@ namespace StoryWriter.Hubs
 
             // Add the user to the room.
             this.Groups.Add(this.Context.ConnectionId, "room-" + roomCode);
-            
+
+            room.AbsentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
+            room.PresentWriters.Add(writer);
+
             // Notify other users in the room that the user joined.
             Clients.Group("room-" + roomCode).userJoined(room);
             Clients.Client(Context.ConnectionId).welcome(room);
