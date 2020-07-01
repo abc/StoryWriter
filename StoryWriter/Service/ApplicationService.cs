@@ -58,9 +58,26 @@ namespace StoryWriter.Service
         {
             var context = GlobalHost.ConnectionManager.GetHubContext<Hubs.StoryHub>();
 
-            room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
-            room.NextAction = ActionType.TallyVotes;
-            context.Clients.Group("room-" + room.Code).startVoting(room);
+            var fragmentCount = room.FrameFragments.Count;
+
+            if (fragmentCount >= 2)
+            {
+                room.NextActionTime = DateTime.Now.AddSeconds(10 * room.FrameFragments.Count);
+                room.NextAction = ActionType.TallyVotes;
+                context.Clients.Group("room-" + room.Code).startVoting(room);
+                return;
+            }
+            else if (fragmentCount == 1)
+            {
+                room.Story.StoryFragments.Add(room.FrameFragments.First());
+            }
+            
+            room.NextAction = ActionType.Vote;
+            room.NextActionTime = DateTime.Now.AddMinutes(1);
+
+            room.FrameFragments.Clear();
+            room.FragmentVotes.Clear();
+            context.Clients.Group("room-" + room.Code).startWriting(room);
             return;
         }
 
