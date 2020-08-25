@@ -1,7 +1,0 @@
-﻿@model StoryWriter.Models.Story
-
-<span class="story-element story-element-intro" style="color: @Model.Intro.Author.Color.HexCode;" data-author="@Model.Intro.Author.Name">@Model.Intro.Text</span>
-@foreach (var element in Model.StoryFragments)
-{
-    <span class="story-element"  style="color: @element.Author.Color.HexCode;" data-author="@element.Author.Name">@element.Text</span>
-}

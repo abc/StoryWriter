@@ -1,0 +1,17 @@
+﻿
+@model Storyteller.Models.Writer
+
+@{
+    ViewBag.Title = "Join";
+}
+
+<h2>Join</h2>
+
+<p>I bet you're going to have loads of fun with your friends in that room, @Model.Name! Ask your friends for the <strong>invite code</strong> and put it here:</p>
+
+<form action="~/Story/Join" method="post">
+    @Html.AntiForgeryToken()
+    <label for="inviteCode">Invite Code: </label>
+    <input type="text" id="inviteCode" name="Id" placeholder="ABCD" />
+    <button type="submit">That's the code!</button>
+</form>

@@ -1,0 +1,21 @@
+﻿
+@model Storyteller.Models.Writer
+
+@{
+    ViewBag.Title = "Start";
+}
+
+<h2>Start</h2>
+
+<p>
+    Wow, what a lovely name, @Model.Name! We're going to have a lot of fun telling stories together!
+
+    Would you like to join a room with your friends, or create a new one?
+</p>
+
+<ul>
+    <li><a href="~/Story/Join">I want to join an existing room!</a></li>
+    <li><a href="~/Story/Create">I want to create a new room!</a></li>
+</ul>
+
+<a href="~/Story/ForgetMe">I want to change my name!</a>

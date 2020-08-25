@@ -1,0 +1,118 @@
+﻿@model Storyteller.Models.Room
+
+@{
+    ViewBag.Title = "Room";
+}
+
+<h2>Welcome to @Model.Name <small>Invite Code: @Model.Code</small></h2>
+
+<h3>Co-Authors:</h3>
+<ul id="user-list">
+    @foreach (var user in Model.PresentWriters)
+    {
+        <li id="user-list-item" style="color: @user.Color.HexCode;">
+            @user.Name
+        </li>
+    }
+    @foreach (var user in Model.AbsentWriters)
+    {
+        <li id="user-list-item" style="text-decoration: line-through;">
+            @user.Name
+        </li>
+    }
+</ul>
+
+<h3>The story so far:</h3>
+
+<div class="story-body" id="story-body">
+    @Html.Partial("StoryText", Model.Story)
+</div>
+
+@if ((Model.Owner.Identifier == ViewBag.Writer.Identifier) && (!Model.Started))
+{
+    <input id="start-game" type="button" value="Start" />
+}
+
+
+<div id="vote-container">
+    <form id="vote-area">
+    </form>
+</div>
+<div class="row">
+    <div class="col-xl-9 col-lg-6 mb-4" id="fragment-area">
+        <span class="text-lg-center">Welcome! Please wait for the next round to begin...</span>
+        @*
+            <label for="nextLine">Next line of the story:</label>
+            <input class="form-control" size="120" maxlength="120" name="nextLine" id="nextLine" type="text" placeholder="And then, suddenly..." />
+            <input class="btn" type="button" value="Submit" id="submit-fragment" />
+        *@
+    </div>
+    <div class="col-xl-3 col-lg-6 mb-4 d-none" id="timer-area">
+        <h2 class="h6 font-weight-bold text-center mb-4">Time Left</h2>
+        <div class="progress mx-auto" id="countdown-timer">
+            <span class="progress-left">
+                <span class="progress-bar border-primary"></span>
+            </span>
+            <span class="progress-right">
+                <span class="progress-bar border-primary"></span>
+            </span>
+            <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                <div class="h2 font-weight-bold"><span id="seconds-to-vote"></span><sub class="small">s</sub></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <a id="leave-room" href="#">Leave this room</a>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        @{
+            var request = Context.Request;
+            var path = request.Path;
+            var query = request.QueryString;
+            var strPathAndQuery = path + query;
+            var absoluteUri = string.Concat(
+                        request.Scheme,
+                        "://",
+                        request.Host.ToUriComponent(),
+                        request.PathBase.ToUriComponent(),
+                        request.Path.ToUriComponent(),
+                        request.QueryString.ToUriComponent());
+
+            var strUrl = absoluteUri.Replace(strPathAndQuery, "/");
+        }
+        writerId = '@ViewBag.Writer.Identifier';
+        roomCode = '@Model.Code';
+        rootPath = '@strUrl';
+
+        var progressMax = 60;
+
+        function percentageToDegrees(percentage, max)
+        {
+            return percentage / max * 360
+        }
+
+        function updateTimer() {
+            $(".progress").each(function () {
+                var value = $(this).attr('data-value');
+                var left = $(this).find('.progress-left .progress-bar');
+                var right = $(this).find('.progress-right .progress-bar');
+
+                if (value > 0) {
+                    if (value <= progressMax / 2) {
+                        left.css('transform', 'rotate(0deg)')
+                        right.css('transform', 'rotate(' + percentageToDegrees(value, progressMax) + 'deg)')
+                    }
+                    else {
+                        right.css('transform', 'rotate(180deg)')
+                        left.css('transform', 'rotate(' + percentageToDegrees(value - progressMax / 2, progressMax) + 'deg)')
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="~/js/signalr/room.js"></script>
+}
