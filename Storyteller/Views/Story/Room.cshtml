@@ -75,7 +75,7 @@
             var query = request.QueryString;
             var strPathAndQuery = path + query;
             var absoluteUri = string.Concat(
-                        request.Scheme,
+                        "https",
                         "://",
                         request.Host.ToUriComponent(),
                         request.PathBase.ToUriComponent(),
