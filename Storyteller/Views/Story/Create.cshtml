@@ -9,9 +9,19 @@
 
 <p>You're the adventurous sort, huh? I like that! OK, let's make a new room! What will we call this room?</p>
 
-<form action="~/Story/Create" method="post">
-    @Html.AntiForgeryToken()
-    <label for="roomName">Room Name: </label>
-    <input type="text" id="roomName" name="Id" placeholder="@Model.Name's room" />
-    <button type="submit">I think this is a nice name.</button>
-</form>
+<div class="row">
+    <div>
+        <p>It's really nice to meet you, thanks for coming. What can I call you?</p>
+
+        <form action="~/Story/Create" method="post">
+            <div class="form-inline">
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    <label class="mr-2" for="roomName">Room Name: </label>
+                    <input id="roomName" class="form-control mr-2" type="text" name="Id" placeholder="@Model.Name's room" />
+                </div>
+                <button type="submit" class="btn btn-primary">I think this is a nice name.</button>
+            </div>
+        </form>
+    </div>
+</div>

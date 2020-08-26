@@ -15,12 +15,12 @@ namespace Storyteller.Models
         /// <summary>
         /// The writer who authored this element of the story.
         /// </summary>
-        public Writer Author;
+        public Writer Author { get; set; }
 
         /// <summary>
         /// Whether or not this fragment is intended to bring the story to a conclusion.
         /// </summary>
-        public bool Ending;
+        public bool Ending { get; set; }
 
         public string Identifier { get; set; }
 

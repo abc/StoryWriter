@@ -7,7 +7,7 @@ namespace Storyteller.Models
 {
     public class PlayerColor
     {
-        public string Name;
-        public string HexCode;
+        public string Name { get; set; }
+        public string HexCode { get; set; }
     }
 }

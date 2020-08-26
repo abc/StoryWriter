@@ -15,7 +15,7 @@ namespace Storyteller.Models
         /// <summary>
         /// The writer's score so far.
         /// </summary>
-        public int Score;
+        public int Score { get; set; }
 
         /// <summary>
         /// A guid is needed to uniquely identify the user.

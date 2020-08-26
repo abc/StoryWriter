@@ -9,9 +9,19 @@
 
 <p>I bet you're going to have loads of fun with your friends in that room, @Model.Name! Ask your friends for the <strong>invite code</strong> and put it here:</p>
 
-<form action="~/Story/Join" method="post">
-    @Html.AntiForgeryToken()
-    <label for="inviteCode">Invite Code: </label>
-    <input type="text" id="inviteCode" name="Id" placeholder="ABCD" />
-    <button type="submit">That's the code!</button>
-</form>
+<div class="row">
+    <div>
+        <p>It's really nice to meet you, thanks for coming. What can I call you?</p>
+
+        <form action="~/Story/Join" method="post">
+            <div class="form-inline">
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    <label class="mr-2" for="inviteCode">Invite Code: </label>
+                    <input id="inviteCode" class="form-control mr-2" type="text" name="Id" placeholder="ABCD" />
+                </div>
+                <button type="submit" class="btn btn-primary">That's the code!</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -66,7 +66,7 @@ namespace Storyteller
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Story}/{action=Index}/{id?}");
 
                 endpoints.MapHub<StoryHub>("/storyhub");
             });

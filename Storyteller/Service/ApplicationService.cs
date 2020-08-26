@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Storyteller.Hubs;
@@ -12,11 +13,15 @@ namespace Storyteller.Service
     {
         private static IHubContext<StoryHub> _context;
 
+        public static void SetContext(IHubContext<StoryHub> hub)
+        {
+            _context = hub;
+        }
+
         public static Random AppRng = new System.Random();
 
-        public static void Initialize(IHubContext<StoryHub> context)
+        public static void Initialize()
         {
-            _context = context;
             Rooms = new List<Room>();
             Writers = new List<Writer>();
         }

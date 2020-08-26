@@ -49,6 +49,11 @@ namespace Storyteller.Service
                 return null;
             }
 
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return null;
+            }
+
             return ApplicationService.FindRoom(code);
         }
 

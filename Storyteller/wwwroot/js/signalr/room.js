@@ -9,12 +9,15 @@ $(function () {
     // Create a function that the hub can call to broadcast messages.
 
     function updateWriters(room) {
+        console.log("Updating writers");
+        console.log(room);
+
         $("#user-list").html("");
-        room.PresentWriters.forEach((element) => {
-            $("#user-list").append('<li style="color: ' + element.Color.HexCode + ';">' + element.Name + "</li>");
+        room.presentWriters.forEach((element) => {
+            $("#user-list").append('<li style="color: ' + element.color.hexCode + ';">' + element.name + "</li>");
         });
-        room.AbsentWriters.forEach((element) => {
-            $("#user-list").append('<li style="text-decoration: line-through; color: ' + element.Color.HexCode + ';"">' + element.Name + "</li>");
+        room.absentWriters.forEach((element) => {
+            $("#user-list").append('<li style="text-decoration: line-through; color: ' + element.color.hexCode + ';"">' + element.name + "</li>");
         });
     }
 
@@ -47,13 +50,13 @@ $(function () {
 
     connection.on("startVoting", function (room) {
         processUpdate(room);
-        let fragments = room.FrameFragments;
+        let fragments = room.frameFragments;
         
         $("#vote-area").empty();
 
         fragments.forEach((element) => {
-            if (element.Author.Identifier != writerId) {
-                $("#vote-area").append("<div><input type=\"radio\" id=\"radio-" + element.Identifier + "\" name=\"vote\" value=\"" + element.Identifier + "\">" + element.Text + "</input></div>");
+            if (element.author.identifier != writerId) {
+                $("#vote-area").append("<div><input type=\"radio\" id=\"radio-" + element.identifier + "\" name=\"vote\" value=\"" + element.identifier + "\">" + element.text + "</input></div>");
             }
         });
 
@@ -64,7 +67,7 @@ $(function () {
     connection.on("startWriting", function (room) {
         processUpdate(room);
         $.ajax({
-            url: rootPath + "/Story/StoryText/" + roomCode,
+            url: rootPath + "Story/StoryText/" + roomCode,
         })
             .done(function (story) {
                 $("#story-body").html(story);
@@ -92,7 +95,7 @@ $(function () {
 
     connection.on("welcome", function (room) {
         processUpdate(room);
-        if (room.Started) {
+        if (room.started) {
             if (room.nextAction == 0) {
                 setupWriting();
             }
@@ -102,7 +105,7 @@ $(function () {
 
     function leaveRoom() {
         connection.invoke("leaveRoom");
-        document.location.href = rootPath + "/Story/LeaveRoom/" + roomCode;
+        document.location.href = rootPath + "Story/LeaveRoom/" + roomCode;
     }
 
     function joinRoom() {
@@ -132,11 +135,11 @@ $(function () {
         console.log(room);
         thisRoom = room;
         nextActionTime = new Date();
-        nextActionTime = nextActionTime.getTime() + room.MillisecondsToAction;
+        nextActionTime = nextActionTime.getTime() + room.millisecondsToAction;
         console.log("Update");
         console.log(nextActionTime);
 
-        if (room.Started) {
+        if (room.started) {
             $('#timer-area').removeClass('d-none');
         }
     }

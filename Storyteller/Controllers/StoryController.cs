@@ -6,11 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Storyteller.Service;
 using Storyteller.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Storyteller.Hubs;
 
 namespace Storyteller.Controllers
 {
     public class StoryController : Controller
     {
+        private readonly IHubContext<StoryHub> _hubContext;
+
+        public StoryController(IHubContext<StoryHub> hubContext)
+        {
+            ApplicationService.SetContext(hubContext);
+
+        }
+
         /// <summary>
         /// The entry-point for the application. If the user is logged in, this will
         /// forward them to their active room or the "Join/Host Room" page.
@@ -100,7 +110,7 @@ namespace Storyteller.Controllers
                 return null;
             }
 
-            HttpContext.Session.SetString(SessionVariables.RoomCode, null);
+            HttpContext.Session.SetString(SessionVariables.RoomCode, string.Empty);
 
             // room.PresentWriters.RemoveAll(w => w.Identifier == writer.Identifier);
             // room.AbsentWriters.Add(writer);

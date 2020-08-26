@@ -10,9 +10,19 @@
 
 <p>Alright! Since you're the creator of this fine room, <strong>you get to write the first line of the story!</strong> Go ahead, write anything which could be the start to the next great novel!</p>
 
-<form action="~/Story/FirstLine/@Model.Code" method="post">
-    @Html.AntiForgeryToken()
-    <label for="firstLine">The first line of your story: </label>
-    <input size="120" maxlength="120" type="text" name="firstLine" id="firstLine" placeholder="It was a dark and stormy night." />
-    <button type="submit">I'm done.</button>
-</form>
+<div class="row">
+    <div>
+        <p>It's really nice to meet you, thanks for coming. What can I call you?</p>
+
+        <form action="~/Story/FirstLine/@Model.Code" method="post">
+            <div class="form-inline">
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    <label class="mr-2" for="firstLine">The first line of your story: </label>
+                    <input size="120" maxlength="120" id="firstLine" class="form-control mr-2" type="text" name="firstLine" placeholder="It was a dark and stormy night." />
+                </div>
+                <button type="submit" class="btn btn-primary">I'm done.</button>
+            </div>
+        </form>
+    </div>
+</div>

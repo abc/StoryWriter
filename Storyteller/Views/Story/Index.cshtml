@@ -3,17 +3,35 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Welcome to our collaborative storytelling game</h2>
+    <div class="page-header" id="banner">
+        <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <h1>Storyteller</h1>
+                <p class="lead">Welcome to our collaborative storytelling game</p>
+            </div>
+            <div class="col-lg-4 col-md-5 col-sm-6">
+                <div class="sponsor">
+                    <script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CKYIE23N&placement=bootswatchcom" id="_carbonads_js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <div>
+                <p>It's really nice to meet you, thanks for coming. What can I call you?</p>
 
-@*
-    <p>Hey, I'm really sorry, but something went wrong there.</p>
-*@
-
-<p>It's really nice to meet you, thanks for coming. What can I call you?</p>
-
-<form action="~/Story/Index" method="post">
-    @Html.AntiForgeryToken()
-    <label for="writerName">My Name: </label>
-    <input id="writerName" type="text" name="Id" placeholder="Your name" />
-    <button type="submit">That's me!</button>
-</form>
+                <form action="~/Story/Index" method="post">
+                    <div class="form-inline">
+                        <div class="form-group">
+                            @Html.AntiForgeryToken()
+                            <label class="mr-2" for="writerName">My Name: </label>
+                            <input id="writerName" class="form-control mr-2" type="text" name="Id" placeholder="Your name" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">That's me!</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        
